@@ -1,24 +1,59 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preview - Article IA LinkedIn</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prévisualisation Article</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; line-height: 1.6; padding: 0 1rem; }
-    h1 { color: #1a1a1a; }
-    h2, h3 { color: #333; }
-    p { margin-bottom: 1rem; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 2em;
+      color: #1a1a1a;
+    }
+    .loading {
+      font-style: italic;
+      color: #888;
+    }
   </style>
 </head>
 <body>
-  <h1>IA Prédictive sur LinkedIn : Révolutionnez votre Acquisition B2B</h1>
-  <p><em>Découvrez comment l'IA prédictive de LinkedIn transforme les stratégies d'acquisition B2B en identifiant les prospects à fort potentiel.</em></p>
+  <h1 id="title" class="loading">Chargement de l'article...</h1>
+  <div id="content"></div>
 
-  <p>70% des efforts marketing B2B sont gaspillés sur des prospects qui ne convertiront jamais. Et si vous pouviez savoir à l'avance quels sont les 30% qui méritent vraiment votre attention?</p>
+  <script type="module">
+    const params = new URLSearchParams(window.location.search);
+    const articleId = params.get('id');
 
-  <!-- ... tu peux coller ici le reste du contenu généré ... -->
+    if (!articleId) {
+      document.getElementById('title').innerText = "Aucun ID fourni dans l'URL.";
+    } else {
+      const supabaseUrl = "https://gebznchytiapnumxxybb.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlYnpuY2h5dGlhcG51bXh4eWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5OTYzNjQsImV4cCI6MjA3NjU3MjM2NH0.Dqlqxnv9WgF0ZMzdSct6L0UbBUzJo47iwZRIrdm4R98";
 
-  <p><strong>Prêt à transformer votre stratégie ?</strong></p>
+      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      const { data, error } = await supabase
+        .from("contents")
+        .select("title, blog_contents")
+        .eq("id", articleId)
+        .single();
+
+      if (error || !data) {
+        document.getElementById('title').innerText = "Erreur : Article introuvable.";
+        console.error(error);
+      } else {
+        document.getElementById('title').innerText = data.title;
+        document.getElementById('content').innerHTML = data.blog_contents;
+      }
+    }
+  </script>
 </body>
 </html>
